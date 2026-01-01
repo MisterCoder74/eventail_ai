@@ -1,0 +1,25 @@
+# API Configuration
+config.txt
+
+# PHP sessions and temporary files
+*.tmp
+*.log
+requests/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if added later)
+node_modules/
+
+# Build/dist directories
+dist/
+build/

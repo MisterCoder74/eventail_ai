@@ -35,7 +35,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #dc85ed;
-			background: radial-gradient(circle, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            background: radial-gradient(circle, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -580,15 +580,657 @@
                 justify-content: center;
             }
         }
+
+        /* ===== CONVERSATIONS SIDEBAR ===== */
+        .conversations-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .conversations-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .sidebar-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle-btn {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 501;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .sidebar-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .saved-conversations-list {
+            padding: 10px;
+        }
+
+        .saved-conversation-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .saved-conversation-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-color: #dc85ed;
+        }
+
+        .saved-conversation-date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .saved-conversation-count {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .saved-conversation-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sidebar-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .sidebar-btn-load {
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+        }
+
+        .sidebar-btn-load:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(220, 133, 237, 0.4);
+        }
+
+        .sidebar-btn-preview {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .sidebar-btn-preview:hover {
+            background: #e0e0e0;
+        }
+
+        .sidebar-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        /* ===== FILTERS ===== */
+        .sidebar-filters {
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        .filter-section {
+            margin-bottom: 15px;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .filter-search {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .filter-search:focus {
+            border-color: #dc85ed;
+            box-shadow: 0 0 0 3px rgba(220, 133, 237, 0.1);
+        }
+
+        .filter-type-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-type-label {
+            flex: 1;
+            min-width: calc(50% - 4px);
+        }
+
+        .filter-type-label input {
+            display: none;
+        }
+
+        .filter-type-label span {
+            display: block;
+            padding: 8px 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .filter-type-label input:checked + span {
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-date-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-date-btn {
+            flex: 1;
+            min-width: calc(33.33% - 4px);
+            padding: 6px 8px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-date-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .filter-date-btn.active {
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-clear {
+            width: 100%;
+            padding: 8px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            color: #666;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .filter-clear:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .active-filter-indicator {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .active-filter-indicator.show {
+            display: flex;
+        }
+
+        .active-filter-text {
+            color: #856404;
+        }
+
+        .active-filter-close {
+            background: none;
+            border: none;
+            color: #856404;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 5px;
+        }
+
+        /* ===== TAG CLOUD ===== */
+        .sidebar-tag-cloud {
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        .tag-cloud-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-cloud-item {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .tag-cloud-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-cloud-item.active {
+            border-color: #dc85ed;
+            background: rgba(220, 133, 237, 0.1);
+        }
+
+        .tag-count-badge {
+            background: #dc85ed;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+            display: none;
+        }
+
+        .tag-cloud-item:hover .tag-count-badge {
+            display: inline-block;
+        }
+
+        /* ===== TAG BADGES ON CARDS ===== */
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-tag-badge {
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(220, 133, 237, 0.8) 0%, rgba(175, 13, 219, 0.8) 39%);
+            color: white;
+            font-weight: 500;
+        }
+
+        .card-tags-more {
+            font-size: 9px;
+            color: #666;
+            padding: 2px 6px;
+        }
+
+        /* ===== SHARE BUTTON ===== */
+        .share-btn {
+            background: none;
+            border: none;
+            color: #666;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-left: 5px;
+        }
+
+        .share-btn:hover {
+            background: #dc85ed;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* ===== SHARE MODAL ===== */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .share-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .share-modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 20px;
+        }
+
+        .share-link-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .share-link-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .share-copy-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(220, 133, 237, 1) 0%, rgba(175, 13, 219, 1) 39%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 133, 237, 0.4);
+        }
+
+        .share-close-btn {
+            padding: 10px 30px;
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .share-close-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== SHARED CONVERSATION BANNER ===== */
+        .shared-conversation-banner {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .shared-conversation-banner.show {
+            display: flex;
+        }
+
+        .shared-banner-text {
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .shared-banner-close {
+            background: none;
+            border: none;
+            color: #856404;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* ===== RESPONSIVE FOR SIDEBAR ===== */
+        @media (max-width: 768px) {
+            .conversations-sidebar {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .filter-type-label {
+                min-width: 100%;
+            }
+
+            .filter-date-btn {
+                min-width: calc(50% - 3px);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Conversations Sidebar Toggle Button -->
+    <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Conversazioni Salvate">💬</button>
+
+    <!-- Conversations Sidebar -->
+    <div class="conversations-sidebar" id="conversations-sidebar">
+        <div class="sidebar-header">
+            <h3>💬 Conversazioni Salvate</h3>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()">&times;</button>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Filters Section -->
+            <div class="sidebar-filters">
+                <div class="active-filter-indicator" id="active-filter-indicator">
+                    <span class="active-filter-text" id="active-filter-text">Filtro attivo</span>
+                    <button class="active-filter-close" onclick="clearAllFilters()">&times;</button>
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-label">🔍 Cerca</label>
+                    <input type="text" class="filter-search" id="filter-search" placeholder="Cerca conversazioni..." oninput="filterConversations()">
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-label">Tipo</label>
+                    <div class="filter-type-options">
+                        <label class="filter-type-label">
+                            <input type="radio" name="filter-type" value="all" checked onchange="filterConversations()">
+                            <span>Tutti</span>
+                        </label>
+                        <label class="filter-type-label">
+                            <input type="radio" name="filter-type" value="text" onchange="filterConversations()">
+                            <span>📋 Text</span>
+                        </label>
+                        <label class="filter-type-label">
+                            <input type="radio" name="filter-type" value="image" onchange="filterConversations()">
+                            <span>🖼️ Image</span>
+                        </label>
+                        <label class="filter-type-label">
+                            <input type="radio" name="filter-type" value="web" onchange="filterConversations()">
+                            <span>🌎 Web</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <label class="filter-label">📅 Data</label>
+                    <div class="filter-date-buttons">
+                        <button class="filter-date-btn active" data-period="all" onclick="setDateFilter('all')">Tutto</button>
+                        <button class="filter-date-btn" data-period="24h" onclick="setDateFilter('24h')">24h</button>
+                        <button class="filter-date-btn" data-period="week" onclick="setDateFilter('week')">Settimana</button>
+                        <button class="filter-date-btn" data-period="month" onclick="setDateFilter('month')">Mese</button>
+                    </div>
+                </div>
+
+                <button class="filter-clear" onclick="clearAllFilters()">🗑️ Pulisci filtri</button>
+            </div>
+
+            <!-- Tag Cloud Section -->
+            <div class="sidebar-tag-cloud">
+                <span class="tag-cloud-title">🏷️ Tag Popolari</span>
+                <div class="tag-cloud" id="tag-cloud">
+                    <!-- Tags will be generated here -->
+                </div>
+            </div>
+
+            <!-- Saved Conversations List -->
+            <div class="saved-conversations-list" id="saved-conversations-list">
+                <!-- Saved conversations will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
             <img src="eventail_AI.png" alt="Éventail-AI Logo">
             <h1>Éventail-AI Chat Assistant</h1>
             <p class="subtitle"><i>A new way to conceive your AI interactions</i></p>
+        </div>
+
+        <!-- Shared Conversation Banner -->
+        <div class="shared-conversation-banner" id="shared-conversation-banner">
+            <span class="shared-banner-text" id="shared-banner-text">Conversazione condivisa</span>
+            <button class="shared-banner-close" onclick="closeSharedBanner()">&times;</button>
         </div>
 
         <!-- Prompt Area -->
@@ -628,9 +1270,25 @@
             <div class="modal-prompt" id="modal-prompt" style="display:flex; padding:20px; border-top:1px solid #e0e0e0; gap:10px;">
                 <input type="text" id="modal-user-input" placeholder="Write your idea..." style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd;" onkeypress="verifyEnterModal(event)">
                 <button class="btn btn-primary" id="modal-send-btn" onclick="sendMessageFromModal()">Send</button>
-            </div>    
+            </div>
         </div>
     </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="share-modal">
+        <div class="share-modal-content">
+            <h3 class="share-modal-title">📤 Condividi Conversazione</h3>
+            <p style="color: #666; margin-bottom: 20px;">Copia questo link per condividere la conversazione:</p>
+            <div class="share-link-container">
+                <input type="text" class="share-link-input" id="share-link-input" readonly>
+                <button class="share-copy-btn" onclick="copyShareLink()">Copia</button>
+            </div>
+            <button class="share-close-btn" onclick="closeShareModal()">Chiudi</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
 
 <script>
 // Global variables
@@ -640,11 +1298,16 @@ let chatMemory = [];
 let apiKey = '';
 let typeText = true;
 let typeImage = false;
-let typeWeb = false;        
+let typeWeb = false;
+let feedback = document.getElementById('feedback');
+
+// New variables for sidebar and filters
+let savedConversations = [];
+let currentFilterTag = null;
+let currentDateFilter = 'all';
 const textSpan = document.getElementById('text');
-const imageSpan = document.getElementById('image');        
+const imageSpan = document.getElementById('image');
 const webSpan = document.getElementById('web');
-let feedback = document.getElementById('feedback');        
 
 // Imposta per chat testuale (default)
 textSpan.style.border = "1px solid red";
@@ -683,6 +1346,14 @@ webSpan.addEventListener('click', () => {
 async function init() {
     await loadApiKey();
     loadConversations();
+    await loadSavedConversations();
+
+    // Check for shared conversation in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedToken = urlParams.get('conversation');
+    if (sharedToken) {
+        await loadSharedConversation(sharedToken);
+    }
 }
 
 // Load API Key from config.txt
@@ -724,9 +1395,21 @@ async function loadConversations() {
 }
 
 // Save conversations
-function saveConversations() {
+async function saveConversations() {
     localStorage.setItem('conversations', JSON.stringify(conversations));
+
+    // Generate tags for conversations without tags
+    for (const conversation of conversations) {
+        if (!conversation.tags || conversation.tags.length === 0) {
+            // Only generate tags if there's some conversation content
+            if (conversation.messages && conversation.messages.length > 1) {
+                await generateTagsForConversation(conversation);
+            }
+        }
+    }
+
     saveToServer();
+    renderTagCloud();
 }
 
 // Save to server
@@ -779,13 +1462,27 @@ function createNewTopic() {
         updatedAt: new Date().toISOString(),
         processing: false,
         imageUrl: null,
-        type: null
+        type: null,
+        tags: [],
+        shareToken: generateUUID()
     };
     conversations.unshift(newConversation);
     currentConversationId = newId;
     chatMemory = [...newConversation.chatMemory];
     saveConversations();
     renderCards();
+}
+
+// Generate UUID for sharing
+function generateUUID() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 // Render cards
@@ -842,6 +1539,12 @@ function renderCards() {
         cardTitle.className = 'card-title';
         cardTitle.textContent = conv.title;
 
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'share-btn';
+        shareBtn.textContent = '🔗';
+        shareBtn.title = 'Condividi conversazione';
+        shareBtn.onclick = (e) => openShareModal(conv.id, e);
+
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '×';
@@ -863,13 +1566,40 @@ function renderCards() {
         cardMeta.appendChild(messagesSpan);
         cardMeta.appendChild(dateSpan);
         cardHeader.appendChild(cardTitle);
+        cardHeader.appendChild(shareBtn);
         cardHeader.appendChild(deleteBtn);
         card.appendChild(cardHeader);
         card.appendChild(cardPreview);
         card.appendChild(cardMeta);
 
+        // Add tags badges
+        if (conv.tags && conv.tags.length > 0) {
+            const cardTags = document.createElement('div');
+            cardTags.className = 'card-tags';
+
+            const tagsToShow = conv.tags.slice(0, 3);
+            tagsToShow.forEach(tag => {
+                const tagBadge = document.createElement('span');
+                tagBadge.className = 'card-tag-badge';
+                tagBadge.textContent = tag;
+                cardTags.appendChild(tagBadge);
+            });
+
+            if (conv.tags.length > 3) {
+                const moreBadge = document.createElement('span');
+                moreBadge.className = 'card-tags-more';
+                moreBadge.textContent = `+${conv.tags.length - 3}`;
+                cardTags.appendChild(moreBadge);
+            }
+
+            card.appendChild(cardTags);
+        }
+
         card.onclick = (e) => {
-            if (!e.target.classList.contains('delete-btn')) {
+            if (!e.target.classList.contains('delete-btn') &&
+                !e.target.classList.contains('share-btn') &&
+                !e.target.closest('.share-btn') &&
+                !e.target.closest('.delete-btn')) {
                 openModal(conv.id);
             }
         };
@@ -1445,6 +2175,411 @@ function appendCitationsToModal(citations) {
 
     container.appendChild(block);
     container.scrollTop = container.scrollHeight;
+}
+
+// ===== PHASE 1: LOAD SAVED CONVERSATIONS =====
+async function loadSavedConversations() {
+    try {
+        const response = await fetch('list-conversations.php');
+        const data = await response.json();
+
+        if (data.success && data.files) {
+            savedConversations = data.files;
+            renderSavedConversationsList();
+            renderTagCloud();
+        }
+    } catch (error) {
+        console.error('Errore nel caricamento delle conversazioni salvate:', error);
+    }
+}
+
+function renderSavedConversationsList() {
+    const listContainer = document.getElementById('saved-conversations-list');
+
+    if (!savedConversations || savedConversations.length === 0) {
+        listContainer.innerHTML = '<div class="sidebar-empty">Nessuna conversazione salvata</div>';
+        return;
+    }
+
+    listContainer.innerHTML = '';
+
+    savedConversations.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'saved-conversation-item';
+
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'saved-conversation-date';
+        dateDiv.textContent = file.modified;
+
+        const countDiv = document.createElement('div');
+        countDiv.className = 'saved-conversation-count';
+        countDiv.innerHTML = `📄 ${file.conversations_count} conversazioni`;
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'saved-conversation-actions';
+
+        const loadBtn = document.createElement('button');
+        loadBtn.className = 'sidebar-btn sidebar-btn-load';
+        loadBtn.textContent = 'Carica';
+        loadBtn.onclick = () => loadSavedSnapshot(file.timestamp);
+
+        const previewBtn = document.createElement('button');
+        previewBtn.className = 'sidebar-btn sidebar-btn-preview';
+        previewBtn.textContent = 'Anteprima';
+        previewBtn.onclick = () => {
+            showToast(`Snapshot del ${file.modified}`);
+        };
+
+        actionsDiv.appendChild(loadBtn);
+        actionsDiv.appendChild(previewBtn);
+
+        item.appendChild(dateDiv);
+        item.appendChild(countDiv);
+        item.appendChild(actionsDiv);
+        listContainer.appendChild(item);
+    });
+}
+
+async function loadSavedSnapshot(timestamp) {
+    try {
+        const response = await fetch(`load-conversations.php?timestamp=${timestamp}`);
+        const data = await response.json();
+
+        if (data.success && data.conversations) {
+            conversations = data.conversations;
+            saveToLocal();
+            renderCards();
+            renderTagCloud();
+            toggleSidebar();
+            showToast(`Caricate ${data.count} conversazioni`);
+        } else {
+            showToast('Errore nel caricamento dello snapshot');
+        }
+    } catch (error) {
+        console.error('Errore nel caricamento dello snapshot:', error);
+        showToast('Errore nel caricamento');
+    }
+}
+
+// ===== PHASE 2: AUTOMATIC TAGGING =====
+async function generateTagsForConversation(conversation) {
+    try {
+        const response = await fetch('generate-tags.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(conversation)
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.tags) {
+            conversation.tags = data.tags;
+        }
+    } catch (error) {
+        console.error('Errore nella generazione dei tag:', error);
+    }
+}
+
+// ===== PHASE 3: SEARCH AND FILTERS =====
+function filterConversations() {
+    const searchTerm = document.getElementById('filter-search').value.toLowerCase();
+    const typeFilter = document.querySelector('input[name="filter-type"]:checked').value;
+
+    let filtered = [...savedConversations];
+
+    // Filter by search term
+    if (searchTerm) {
+        filtered = filtered.filter(file => {
+            return file.filename.toLowerCase().includes(searchTerm);
+        });
+    }
+
+    // Filter by type (note: this would need to load each file to check types, simplified here)
+    // For now, we'll filter by date only
+
+    // Filter by date
+    filtered = filterByDate(filtered);
+
+    // Render filtered list
+    renderFilteredConversations(filtered);
+}
+
+function filterByDate(files) {
+    if (currentDateFilter === 'all') return files;
+
+    const now = new Date();
+    let cutoffDate;
+
+    switch (currentDateFilter) {
+        case '24h':
+            cutoffDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            break;
+        case 'week':
+            cutoffDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+        case 'month':
+            cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+        default:
+            return files;
+    }
+
+    return files.filter(file => {
+        const fileDate = new Date(file.modified);
+        return fileDate >= cutoffDate;
+    });
+}
+
+function renderFilteredConversations(files) {
+    const listContainer = document.getElementById('saved-conversations-list');
+
+    if (!files || files.length === 0) {
+        listContainer.innerHTML = '<div class="sidebar-empty">Nessuna conversazione trovata</div>';
+        return;
+    }
+
+    listContainer.innerHTML = '';
+
+    files.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'saved-conversation-item';
+
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'saved-conversation-date';
+        dateDiv.textContent = file.modified;
+
+        const countDiv = document.createElement('div');
+        countDiv.className = 'saved-conversation-count';
+        countDiv.innerHTML = `📄 ${file.conversations_count} conversazioni`;
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'saved-conversation-actions';
+
+        const loadBtn = document.createElement('button');
+        loadBtn.className = 'sidebar-btn sidebar-btn-load';
+        loadBtn.textContent = 'Carica';
+        loadBtn.onclick = () => loadSavedSnapshot(file.timestamp);
+
+        actionsDiv.appendChild(loadBtn);
+        item.appendChild(dateDiv);
+        item.appendChild(countDiv);
+        item.appendChild(actionsDiv);
+        listContainer.appendChild(item);
+    });
+}
+
+function setDateFilter(period) {
+    currentDateFilter = period;
+
+    // Update button styles
+    document.querySelectorAll('.filter-date-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.period === period) {
+            btn.classList.add('active');
+        }
+    });
+
+    filterConversations();
+}
+
+function clearAllFilters() {
+    document.getElementById('filter-search').value = '';
+    document.querySelector('input[name="filter-type"][value="all"]').checked = true;
+    currentDateFilter = 'all';
+
+    document.querySelectorAll('.filter-date-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.period === 'all') {
+            btn.classList.add('active');
+        }
+    });
+
+    currentFilterTag = null;
+    document.querySelectorAll('.tag-cloud-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    document.getElementById('active-filter-indicator').classList.remove('show');
+    renderSavedConversationsList();
+}
+
+// ===== PHASE 4: TAG CLOUD =====
+function renderTagCloud() {
+    const tagCloud = document.getElementById('tag-cloud');
+
+    // Count tag frequencies from all conversations
+    const tagFrequency = {};
+
+    conversations.forEach(conv => {
+        if (conv.tags && Array.isArray(conv.tags)) {
+            conv.tags.forEach(tag => {
+                tagFrequency[tag] = (tagFrequency[tag] || 0) + 1;
+            });
+        }
+    });
+
+    const sortedTags = Object.entries(tagFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 15);
+
+    if (sortedTags.length === 0) {
+        tagCloud.innerHTML = '<span style="color: #999; font-size: 12px;">Nessun tag disponibile</span>';
+        return;
+    }
+
+    const maxFreq = sortedTags[0][1];
+    const baseFontSize = 12;
+    const scaleFactor = 14;
+
+    tagCloud.innerHTML = '';
+    sortedTags.forEach(([tag, freq]) => {
+        const tagItem = document.createElement('span');
+        tagItem.className = 'tag-cloud-item';
+        tagItem.textContent = tag;
+        tagItem.style.fontSize = `${baseFontSize + (freq / maxFreq) * scaleFactor}px`;
+
+        // Color gradient based on frequency
+        const hue = 270 + (freq / maxFreq) * 30;
+        tagItem.style.color = `hsl(${hue}, 70%, 50%)`;
+
+        // Add count badge
+        const countBadge = document.createElement('span');
+        countBadge.className = 'tag-count-badge';
+        countBadge.textContent = freq;
+        tagItem.appendChild(countBadge);
+
+        tagItem.onclick = () => filterByTag(tag);
+        tagCloud.appendChild(tagItem);
+    });
+}
+
+function filterByTag(tag) {
+    if (currentFilterTag === tag) {
+        clearTagFilter();
+        return;
+    }
+
+    currentFilterTag = tag;
+
+    // Update active state
+    document.querySelectorAll('.tag-cloud-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.textContent === tag) {
+            item.classList.add('active');
+        }
+    });
+
+    // Show indicator
+    const indicator = document.getElementById('active-filter-indicator');
+    const indicatorText = document.getElementById('active-filter-text');
+    indicatorText.textContent = `Tag: ${tag}`;
+    indicator.classList.add('show');
+
+    // Filter conversations in main view
+    const filtered = conversations.filter(conv => {
+        return conv.tags && conv.tags.includes(tag);
+    });
+
+    const originalConversations = [...conversations];
+    conversations = filtered;
+    renderCards();
+    conversations = originalConversations;
+}
+
+function clearTagFilter() {
+    currentFilterTag = null;
+    document.querySelectorAll('.tag-cloud-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.getElementById('active-filter-indicator').classList.remove('show');
+    renderCards();
+}
+
+// ===== PHASE 5: SHARE FUNCTIONALITY =====
+function openShareModal(conversationId, event) {
+    event.stopPropagation();
+
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (!conversation) return;
+
+    const shareLink = `${window.location.origin}${window.location.pathname}?conversation=${conversation.shareToken}`;
+    document.getElementById('share-link-input').value = shareLink;
+    document.getElementById('share-modal').classList.add('active');
+}
+
+function closeShareModal() {
+    document.getElementById('share-modal').classList.remove('active');
+}
+
+async function copyShareLink() {
+    const shareInput = document.getElementById('share-link-input');
+
+    try {
+        await navigator.clipboard.writeText(shareInput.value);
+        showToast('Link copiato!');
+        closeShareModal();
+    } catch (error) {
+        shareInput.select();
+        document.execCommand('copy');
+        showToast('Link copiato!');
+        closeShareModal();
+    }
+}
+
+async function loadSharedConversation(shareToken) {
+    try {
+        const response = await fetch(`load-shared-conversation.php?shareToken=${shareToken}`);
+        const data = await response.json();
+
+        if (data.success && data.conversation) {
+            const sharedConv = data.conversation;
+
+            // Check if conversation already exists
+            const exists = conversations.find(c => c.shareToken === shareToken);
+            if (!exists) {
+                conversations.unshift(sharedConv);
+            } else {
+                showToast('Questa conversazione è già presente');
+            }
+
+            currentConversationId = sharedConv.id;
+            chatMemory = sharedConv.chatMemory || [];
+            renderCards();
+
+            // Show banner
+            const banner = document.getElementById('shared-conversation-banner');
+            const bannerText = document.getElementById('shared-banner-text');
+            const date = new Date(sharedConv.createdAt).toLocaleDateString('it-IT');
+            bannerText.textContent = `Conversazione condivisa del ${date}`;
+            banner.classList.add('show');
+        } else {
+            showToast('Conversazione non trovata');
+        }
+    } catch (error) {
+        console.error('Errore nel caricamento della conversazione condivisa:', error);
+        showToast('Errore nel caricamento');
+    }
+}
+
+function closeSharedBanner() {
+    document.getElementById('shared-conversation-banner').classList.remove('show');
+}
+
+// ===== SIDEBAR TOGGLE =====
+function toggleSidebar() {
+    const sidebar = document.getElementById('conversations-sidebar');
+    sidebar.classList.toggle('open');
+}
+
+// ===== TOAST NOTIFICATION =====
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
 }
 
 // Ricalcola ventaglio al resize
