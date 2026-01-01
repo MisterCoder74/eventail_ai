@@ -1,0 +1,263 @@
+# Éventail-AI Refactoring Documentation
+
+## Overview
+Éventail-AI has been refactored from a conversation persistence + multi-user system to a lightweight stateless + shared image generations model.
+
+## Key Changes
+
+### Architecture Changes
+- **Stateless Conversations**: Conversations now live only in JavaScript session memory (max 50 messages)
+- **No Persistence**: Refreshing the page will lose the current conversation (user is warned)
+- **Public Images**: All generated images are public and visible to all users
+- **LocalStorage API Key**: API key is stored in browser localStorage instead of config.txt
+
+### File Structure
+```
+/eventail_ai/
+├── eventail.php (main application, renamed from index.html)
+├── users-generations.html (new page showing all public images)
+├── /cardimages/ (public image gallery with metadata)
+│   ├── img_*.png
+│   └── img_*.json (metadata: timestamp, prompt, size)
+├── /uploads/ (hidden from UI, auto-cleaned >500MB)
+│   └── .htaccess (Deny from all)
+└── /php/
+    ├── save-card-image.php (saves image + metadata JSON)
+    ├── get-all-generations.php (retrieves all public images)
+    └── cleanup-uploads.php (auto-deletes old files)
+```
+
+### Removed Features
+- ❌ Conversation persistence (save/load from server)
+- ❌ Saved conversations sidebar
+- ❌ Search and filters
+- ❌ Tag cloud
+- ❌ Share functionality
+- ❌ Multi-user conversations
+
+### New Features
+- ✅ Simplified sidebar with greeting
+- ✅ API key setup modal (localStorage based)
+- ✅ Public generations gallery page
+- ✅ Image generation warning modal
+- ✅ Conversation export (JSON)
+- ✅ Auto-cleanup of uploads folder (500MB limit)
+- ✅ Session warning banner
+
+## API Key Management
+
+### Old Method (Removed)
+```php
+// Loaded from config.txt
+apiKey = file_get_contents('config.txt');
+```
+
+### New Method
+```javascript
+// Stored in localStorage
+localStorage.setItem('eventailAiApiKey', apiKey);
+
+// Retrieved for API calls
+const apiKey = localStorage.getItem('eventailAiApiKey');
+```
+
+## Conversation Memory
+
+### Limit
+- Maximum 50 messages per conversation
+- System message is preserved
+- Oldest messages are removed when limit is exceeded
+
+### Lifecycle
+1. User creates new topic → new conversation object created
+2. Messages added to chatMemory array
+3. Memory limited to 50 messages (FIFO)
+4. Page refresh → conversation lost (user warned)
+
+## Image Generation
+
+### Flow
+1. User clicks image mode → typeImage = true
+2. User enters prompt → shows warning modal
+3. User confirms → generates image via DALL-E 2
+4. Image saved to /cardimages/ with metadata JSON
+5. Image immediately visible in users-generations.html
+6. Toast notification: "✅ Immagine condivisa pubblicamente!"
+
+### Metadata Format
+```json
+{
+  "filename": "img_abc123.png",
+  "timestamp": "2026-01-01T12:00:00+00:00",
+  "prompt": "A beautiful sunset over mountains",
+  "size_bytes": 123456,
+  "size_human": "120.56 KB"
+}
+```
+
+## Upload Folder Management
+
+### Auto-Cleanup Logic
+1. Check folder size on page load
+2. If > 500MB:
+   - Sort files by modification time (oldest first)
+   - Delete 10 oldest files
+   - Re-check size
+   - Repeat until < 500MB or max iterations (50)
+3. Silently continue if cleanup fails (don't block UX)
+
+### Security
+- /uploads/ directory hidden from UI
+- .htaccess: "Deny from all"
+- Not accessible via web browser
+
+## PHP Endpoints
+
+### /php/save-card-image.php
+```php
+POST request
+Input: { imageData, prompt, timestamp }
+Output: { success, filepath }
+- Saves image to /cardimages/img_*.png
+- Creates metadata JSON file alongside
+```
+
+### /php/get-all-generations.php
+```php
+GET request
+Output: { success, generations: [...] }
+- Reads all .json files in /cardimages/
+- Returns sorted by timestamp (newest first)
+```
+
+### /php/cleanup-uploads.php
+```php
+GET request
+Output: { success, deletedCount, initialSize, finalSize }
+- Checks /uploads/ folder size
+- Deletes oldest files if > 500MB
+- Returns cleanup statistics
+```
+
+## Usage
+
+### Setting Up API Key
+1. Open eventail.php
+2. Click "⚙️ Setup API Key" in sidebar
+3. Enter your OpenAI API key (sk-...)
+4. Click "Salva"
+5. Key stored in localStorage for future use
+
+### Starting a Conversation
+1. Type message in input field
+2. Click "Send" or press Enter
+3. Message sent to GPT-4o-mini
+4. Response displayed in card
+5. Click card to open modal with full history
+
+### Generating Images
+1. Click 🖼️ icon (image mode)
+2. Type image prompt
+3. Click "Send"
+4. Confirm warning modal
+5. Image generated and saved publicly
+6. View in "🖼️ Public Generations"
+
+### Web Search
+1. Click 🌎 icon (web mode)
+2. Type search query
+3. Results from GPT-4o-mini-search-preview
+4. Citations displayed with sources
+
+### Exporting Conversation
+1. Open a conversation card
+2. Click "📥 Export" button
+3. Conversation downloaded as JSON file
+
+### Viewing Public Generations
+1. Click "🖼️ Public Generations" in sidebar
+2. Browse all images generated by users
+3. Click image for full-size view
+4. Page auto-refreshes every 30 seconds
+
+## Testing Checklist
+
+- [x] eventail.php loads without errors
+- [x] Sidebar visible with greeting, buttons, footer
+- [x] API key modal works, saves to localStorage
+- [x] OpenAI API calls use localStorage key
+- [x] Image generation shows warning and requires confirmation
+- [x] Generated images appear in /cardimages/ with metadata
+- [x] users-generations.html shows all images
+- [x] Cleanup upload script works (deletes old files if > 500MB)
+- [x] Conversation persists max 50 messages, then removes old ones
+- [x] Page refresh clears conversation (as designed)
+- [x] Export conversation works
+- [x] Mobile responsive (sidebar collapses/reflows)
+- [x] Session warning banner displayed
+- [x] Toast notifications work correctly
+
+## Migration Notes
+
+### For Existing Users
+1. Old conversation data in localStorage will be ignored
+2. API key from config.txt is no longer used
+3. Must setup API key via new modal
+4. Saved conversations from server are not accessible
+5. All old PHP endpoints removed
+
+### Data Cleanup (Optional)
+If you want to remove old data:
+```bash
+# Remove old conversation files
+rm requests/*.json
+
+# Note: /cardimages/ is kept for public gallery
+# Note: /uploads/ will auto-clean on next load
+```
+
+## Technical Notes
+
+### JavaScript Changes
+- Removed: loadSavedConversations(), saveConversations(), saveToServer(), loadFromServer()
+- Removed: filterConversations(), renderTags(), all tag/search functionality
+- Removed: openShareModal(), copyShareLink(), loadSharedConversation()
+- Added: openApiKeyModal(), saveApiKey(), closeApiKeyModal(), getApiKeyForOpenAI()
+- Added: openImageWarning(), closeImageWarning(), proceedImageGeneration()
+- Added: initSidebar(), setGreeting()
+- Added: exportConversation()
+- Modified: init() to load API key from localStorage
+- Modified: sendMessage() to show warning for image generation
+- Modified: generateCardImage() to save metadata JSON
+- Modified: getChatGPTResponse(), generateCardImage(), getChatGPTResponseWeb() to use getApiKeyForOpenAI()
+- Added: limitChatMemory() to enforce 50 message limit
+- Added: cleanupUploads() to call cleanup endpoint
+
+### CSS Changes
+- Removed: All old sidebar, filter, tag cloud, share modal styles
+- Added: New simplified sidebar styles
+- Added: Session warning banner styles
+- Added: New modal styles for API key and image warning
+- Added: Export button styles
+- Modified: Main content layout to accommodate fixed sidebar
+
+### PHP Changes
+- Removed: generate-tags.php, list-conversations.php, load-conversations.php, save-conversations.php, load-shared-conversation.php
+- Updated: save-card-image.php (now saves metadata JSON)
+- Added: get-all-generations.php
+- Added: cleanup-uploads.php
+
+## Future Enhancements
+
+Possible future improvements:
+- User authentication for personalized galleries
+- Markdown export option for conversations
+- Image download button in gallery
+- Search/filter in public gallery
+- User-provided names for greeting
+- Session persistence option (localStorage)
+- Multi-language support
+
+## Support
+
+For issues or questions, refer to the main README.md or contact development team.
