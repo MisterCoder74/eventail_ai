@@ -4,7 +4,9 @@ config.txt
 # PHP sessions and temporary files
 *.tmp
 *.log
-requests/*.log
+
+# Uploads directory (temporary analysis files, auto-cleaned)
+uploads/*
 
 # OS files
 .DS_Store
