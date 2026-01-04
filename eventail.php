@@ -536,7 +536,7 @@
             background: white;
             border-radius: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
@@ -544,7 +544,7 @@
         }
 
         .modal-header {
-            padding: 25px;
+            padding: 15px;
             border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
@@ -719,7 +719,7 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             z-index: 1000;
-            padding: 20px;
+            padding: 10px;
             align-items: center;
             justify-content: center;
         }
@@ -732,29 +732,30 @@
             background: white;
             border-radius: 20px;
             width: 100%;
-            max-width: 500px;
-            padding: 30px;
+            max-width: 900px;
+            height: 80vh;
+            padding: 10px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         .modal-content h3 {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: #2c2c2c;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .modal-content p {
             color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
 
         .modal-content input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 8px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             outline: none;
             transition: all 0.3s;
             margin-bottom: 10px;
@@ -768,8 +769,8 @@
         .modal-content small {
             display: block;
             color: #999;
-            font-size: 12px;
-            margin-bottom: 20px;
+            font-size: 10px;
+            margin-bottom: 10px;
         }
 
         .modal-actions {
@@ -779,11 +780,11 @@
         }
 
         .modal-actions button {
-            padding: 10px 20px;
+            padding: 6px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 400;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -912,7 +913,7 @@
             <!-- Prompt Area -->
             <div class="prompt-area">
                 <div class="prompt-container">
-                    <input type="text" id="user-input" placeholder="Insert your idea..." onkeypress="verifyEnter(event)">
+                    <input type="text" id="user-input" placeholder="Insert your idea..." onkeypress="verifyEnter(event)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                     <button class="btn btn-primary" id="send-btn" onclick="sendMessage()">Send</button>
                     <button class="btn btn-secondary" onclick="createNewTopic()">New Topic</button>
                 </div>
@@ -973,7 +974,7 @@
             <p><strong>Sei d'accordo?</strong></p>
             <div class="modal-actions">
                 <button onclick="proceedImageGeneration()">Genera e Condividi</button>
-                <button onclick="closeImageWarning()">Annulla</button>
+                <button onclick="cancelImageGeneration()">Annulla</button>
             </div>
         </div>
     </div>
@@ -985,6 +986,7 @@
 // Global variables
 let conversations = [];
 let currentConversationId = null;
+        let pendingImagePrompt;
 let chatMemory = [];
 let typeText = true;
 let typeImage = false;
@@ -1103,7 +1105,7 @@ function getApiKeyForOpenAI() {
 }
 
 // ===== IMAGE WARNING MODAL =====
-let pendingImagePrompt = null;
+
 
 function openImageWarning(prompt) {
     pendingImagePrompt = prompt;
@@ -1111,18 +1113,23 @@ function openImageWarning(prompt) {
 }
 
 function closeImageWarning() {
-    pendingImagePrompt = null;
     document.getElementById('image-warning-modal').classList.remove('active');
 }
+        
+function cancelImageGeneration() {
+    pendingImagePrompt = null;
+    document.getElementById('image-warning-modal').classList.remove('active');
+}        
 
 async function proceedImageGeneration() {
     closeImageWarning();
     
     if (pendingImagePrompt) {
+            console.log('prompt: ' + pendingImagePrompt);
         const prompt = pendingImagePrompt;
         pendingImagePrompt = null;
         
-        const conversation = conversations.find(c => c.id === currentConversationId);
+        let conversation = conversations.find(c => c.id === currentConversationId);
         if (!conversation) {
             conversation = createNewConversation();
         }
@@ -1148,7 +1155,7 @@ async function proceedImageGeneration() {
 // ===== CLEANUP UPLOADS =====
 async function cleanupUploads() {
     try {
-        const response = await fetch('/php/cleanup-uploads.php');
+        const response = await fetch('./php/cleanup-uploads.php');
         if (response.ok) {
             const result = await response.json();
             console.log('Cleanup result:', result);
