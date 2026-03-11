@@ -37,6 +37,7 @@ function getDirectorySize($dir) {
 }
 
 $currentSize = getDirectorySize($dir);
+$initialSize = $currentSize;
 
 // Delete files in FIFO order (oldest first) until under 500MB
 while ($currentSize > $maxSizeBytes && $iterations < $maxIterations) {
@@ -84,7 +85,7 @@ $finalSize = getDirectorySize($dir);
 echo json_encode([
     'success' => true,
     'deletedCount' => $deletedCount,
-    'initialSize' => formatBytes($currentSize + ($deletedCount > 0 ? ($deletedCount * 100000) : 0)), // Approximate
+    'initialSize' => formatBytes($initialSize),
     'finalSize' => formatBytes($finalSize),
     'iterations' => $iterations
 ]);
